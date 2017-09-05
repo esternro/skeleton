@@ -33,5 +33,5 @@ public class ReceiptResponse {
         this.value = dbRecord.getAmount();
         this.created = dbRecord.getUploaded();
         this.id = dbRecord.getId();
-    }
+}
 }

@@ -7,10 +7,9 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 
-package controllers;
-
 import dao.ReceiptDao;
 import dao.TagsDao;
+import dao.ReceiptDao;
 import generated.tables.records.ReceiptsRecord;
 
 import javax.validation.Valid;
@@ -19,34 +18,45 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import javax.ws.rs.core.Response;
-
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 
+
+@Path("/tags")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class TagController {
-    final ReceiptDao receipts;
     final TagsDao tags;
+    final ReceiptDao receipt;
 
-    @PUT
-    @Path("/tags/{tag}")
-    public void toggleTag(@PathParam("tag") String tag, Integer receipt_id) {
-        if (receipts.idPresent(receipt_id)== false) {
-            throw new WebApplicationException("receipt id does not exist", Response.Status.NOT_FOUND);
-        }
-        // find or create tag by name
-        Integer tagId = tags.getTagFromName(tag);
-        if (tagId == null) {
-            tagId = tags.insert(tag);
-        }
-        receipts.toggleTagReceipt(receipt_id, tagId);
-        return Response.ok().build();
+
+    public TagController(TagsDao tags, ReceiptDao receipt) {
+        this.tags = tags;
+        this.receipt = receipt;
     }
 
-//    @GET
-//    @Path("/tags/{tag}")
-//    public List<ReceiptResponse> getReceipts(@PathParam("tag") String tag) {
-//
-//    }
+    @PUT
+//    @Consumes(MediaType.TEXT_PLAIN)
+//    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/{tag}")
+    public String toggleTag(@PathParam("tag") String tag, int tid) {
+        System.out.println("========================="+tag);
+        if (tags.taggedReceipts(tag, tid)) {
+            tags.delete(tag, tid);
+        } else {
+            tags.insert(tag, tid);
+        }
+        return tag;
+    }
+
+    @GET
+    @Path("/{tag}")
+    public List<ReceiptResponse> getReceipts(@PathParam("tag") String tag) {
+        List<Integer> receipt_id = tags.getTagsWithReceipts(tag);
+        System.out.println(receipt_id);
+        List<ReceiptsRecord> tagsRecords = receipt.getAllReceiptsIds(receipt_id);
+        System.out.println(tagsRecords);
+        return tagsRecords.stream().map(ReceiptResponse::new).collect(toList());
+    }
 }

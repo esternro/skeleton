@@ -2,6 +2,7 @@ package api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import generated.tables.records.ReceiptsRecord;
+import java.util.List;
 
 import java.math.BigDecimal;
 import java.sql.Time;

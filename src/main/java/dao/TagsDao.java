@@ -17,8 +17,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static generated.Tables.RECEIPTS;
 import static generated.Tables.TAGS;
 
-@Consumes(MediaType.TEXT_PLAIN)
-@Produces(MediaType.TEXT_PLAIN)
+
 public class TagsDao {
     DSLContext dsl;
 

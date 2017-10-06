@@ -7,10 +7,12 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 
+import api.TagsResponse;
 import dao.ReceiptDao;
 import dao.TagsDao;
 import dao.ReceiptDao;
 import generated.tables.records.ReceiptsRecord;
+import generated.tables.records.TagsRecord;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -20,6 +22,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
+import java.util.ArrayList;
 
 
 
@@ -56,7 +59,14 @@ public class TagController {
         List<Integer> receipt_id = tags.getTagsWithReceipts(tag);
         System.out.println(receipt_id);
         List<ReceiptsRecord> tagsRecords = receipt.getAllReceiptsIds(receipt_id);
-        System.out.println(tagsRecords);
         return tagsRecords.stream().map(ReceiptResponse::new).collect(toList());
     }
+
+    @GET
+    public List<TagsResponse> getTags(){
+        List<TagsRecord> tagsRecord = tags.getAllTags();
+        System.out.println(tagsRecord);
+        return tagsRecord.stream().map(TagsResponse::new).collect(toList());
+    }
+
 }
